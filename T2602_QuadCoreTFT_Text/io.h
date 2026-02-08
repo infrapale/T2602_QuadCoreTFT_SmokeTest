@@ -1,6 +1,9 @@
 #ifndef __IO_H__
 #define __IO_H__
 #include "Arduino.h"
+
+#define SerialRFM       Serial1
+
 #define PIN_TX0         (0u)
 #define PIN_RX0         (1u)
 #define PIN_I2C1_SDA    (2u)
@@ -11,7 +14,12 @@
 #define PIN_I2S_LRCK    (7u)
 #define PIN_I2S_DOUT    (8u)
 #define PIN_TFT_RESET   (9u)
+
+#define PIN_SD_SCK      (10u)
+#define PIN_SD_MOSI     (11u)
+#define PIN_SD_MISO     (12u)
 #define PIN_SD_CS       (13u)
+
 #define PIN_TFT_BL      (14u)
 #define PIN_TFT_DC      (15u)
 #define PIN_SPI0_MISO   (16u)

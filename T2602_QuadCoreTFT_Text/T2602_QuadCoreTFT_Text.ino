@@ -21,6 +21,7 @@ Updated by Bodmer for variable meter size
 
 #include <TFT_eSPI.h> // Hardware-specific library
 #include "box.h"
+#include "uart.h"
 
 TFT_eSPI tft = TFT_eSPI();       // Invoke custom library
 
@@ -44,6 +45,10 @@ void setup(void) {
   tft.setRotation(1);
   Serial.begin(115200); // For debug
   
+  SerialRFM.setTX(PIN_TX0 );   // UART0
+  SerialRFM.setRX(PIN_RX0); 
+
+
   pinMode(PIN_TFT_BL, OUTPUT);
   digitalWrite(PIN_TFT_BL,HIGH);
   tft.fillScreen(TFT_RED);
@@ -59,6 +64,7 @@ void setup(void) {
 
 
 void loop() {
+    uart_read_rfm_uart();
   if (false)
   {
        // (updateTime <= millis()) {
