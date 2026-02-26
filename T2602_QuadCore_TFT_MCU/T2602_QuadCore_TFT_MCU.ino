@@ -16,17 +16,27 @@ Updated by Bodmer for variable meter size
 
 // Define meter size as multiplier of 240 pixels wide 1.0 and 1.3333 work OK
 #define M_SIZE 1.3333
+<<<<<<< HEAD
 
 #include <SPI.h>
 #include "io.h"
+=======
+#include "io.h"
+#include <SPI.h>
+>>>>>>> 71d76d01cd52f64c03fa07750c2b4a5a215172bc
 
 #include <TFT_eSPI.h> // Hardware-specific library
 
 TFT_eSPI tft = TFT_eSPI();       // Invoke custom library
 
 #define TFT_GREY 0x5AEB
+<<<<<<< HEAD
 #define PIN_LDR_ANALOG_INP    (26u)
 #define PIN_PIR_INP           (5u)
+=======
+//#define PIN_LDR_ANALOG_INP    (26u)
+//#define PIN_PIR_INP           (5u)
+>>>>>>> 71d76d01cd52f64c03fa07750c2b4a5a215172bc
 #define PIN_TFT_LED_OUT       (10u)
 
 float ltx = 0;    // Saved x coord of bottom of needle
@@ -44,11 +54,20 @@ void setup(void) {
   tft.setRotation(1);
   Serial.begin(57600); // For debug
   tft.fillScreen(TFT_BLACK);
+<<<<<<< HEAD
   pinMode(PIN_TFT_LED_OUT, OUTPUT);
   pinMode(PIN_PIR_INP,INPUT);
   pinMode(PIN_LDR_ANALOG_INP,INPUT);
   analogReadResolution(12);
   analogWrite(PIN_TFT_LED_OUT,255);
+=======
+  pinMode(PIN_TFT_BL, OUTPUT);
+  digitalWrite(PIN_TFT_BL,HIGH);
+  //pinMode(PIN_PIR_INP,INPUT);
+  //pinMode(PIN_LDR_ANALOG_INP,INPUT);
+  analogReadResolution(12);
+  //analogWrite(PIN_TFT_LED_OUT,255);
+>>>>>>> 71d76d01cd52f64c03fa07750c2b4a5a215172bc
 
   analogMeter(); // Draw analogue meter
 
