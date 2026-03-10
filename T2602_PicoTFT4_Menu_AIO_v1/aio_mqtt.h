@@ -58,6 +58,7 @@ typedef struct
 void aio_mqtt_initialize(void);
 
 
+void aio_mqtt_debug_print(void);
 
 void aio_mqtt_stm();
 

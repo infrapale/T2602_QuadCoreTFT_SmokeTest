@@ -116,11 +116,6 @@ void box_clear(void)
 
 void box_initialize(void)
 {
-    pinMode(PIN_TFT_LED, OUTPUT);
-    // pinMode(PIN_PIR_INP,INPUT);
-    pinMode(PIN_LDR_AN,INPUT);
-    analogReadResolution(12);
-    analogWrite(PIN_TFT_LED,200);
     
     SPI.beginTransaction(mySPISettings);
     tft.init();
@@ -289,9 +284,9 @@ void box_print_text(uint8_t bindx, char *txt)
 void box_print_line(char *txt, uint8_t color_sch)
 {
     uint8_t bindx = box_get_indx(BOX_GROUP_16, box_ctrl.print_area.top);
-    box_scroll_down(BOX_GROUP_16);
-    box_paint(bindx,color_sch);
-    box_print_text(bindx, txt);
+    // box_scroll_down(BOX_GROUP_16);
+    // box_paint(bindx,color_sch);
+    //box_print_text(bindx, txt);
 }
 
 void box_update_area(void)

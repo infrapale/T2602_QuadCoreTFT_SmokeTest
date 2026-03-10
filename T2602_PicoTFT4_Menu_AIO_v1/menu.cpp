@@ -5,9 +5,11 @@
 #include "BtnPinOnOff.h"
 #include "dashboard.h"
 #include "box.h"
+#include "a4key.h"
 
 #define NBR_MENU_KEYS  4
 
+a4key a4_key(PIN_ABTN);
 
 void dummy_cb()
 {
@@ -77,7 +79,7 @@ void menu_state_machine(void);
 
 //                                  123456789012345   ival  next  state  prev  cntr flag  call backup
 atask_st menu_th =                {"Menu State     ", 100,    0,     0,  255,    0,   1, menu_state_machine };
-atask_st menu_key_scan_handle =   {"Menu Key Scan  ", 10,     0,     0,  255,    0,   1, menu_button_scan };
+atask_st kscan_h =                {"Key Scan       ", 10,     0,     0,  255,    0,   1, menu_button_scan };
 
 
 void menu_initialize(void)
@@ -86,9 +88,9 @@ void menu_initialize(void)
   // menu_btn[1].Init(PIN_KEY2,'2', true);
   // menu_btn[2].Init(PIN_KEY3,'1', true);
   // menu_btn[3].Init(PIN_KEY_STATUS,'0', false);
-
-  // atask_add_new(&menu_th);
-  // atask_add_new(&menu_key_scan_handle);
+  a4_key.begin();
+  atask_add_new(&menu_th);
+  atask_add_new(&kscan_h);
   // menu_draw();
 
 }
@@ -122,8 +124,9 @@ void menu_state_machine(void)
             menu_th.state = 10;
             break;
         case 10:
-            keyc = menu_read();
-            if(keyc != 0x00) menu_th.state = 20;
+            keyc = a4_key.read();
+            if(keyc) Serial.printf("Key: %c\n",keyc);
+            //if(keyc != 0x00) menu_th.state = 20;
             // else dashboard 
             break;
         case 20:
@@ -180,10 +183,7 @@ void menu_draw(void)
 
 void menu_button_scan(void)
 {
-    for( uint8_t i= 0; i < NBR_MENU_KEYS; i++)
-    {
-        menu_btn[i].Scan();
-    }
+    a4_key.scan();
 }
 
 char menu_read_button(void)

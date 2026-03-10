@@ -84,8 +84,11 @@ Adafruit_MQTT_Publish *aio_publ[AIO_PUBL_NBR_OF] =
   [AIO_PUBL_VA_AC_TEMP]  = &villa_astrid_home_mode
 };
 
+void save_subs_time(uint8_t subs_indx);
 void save_subs_float_data(uint8_t subs_indx);
+
 void cb_dummy(double tmp) {};
+void cb_save_aio_time(double tmp){ save_subs_time(AIO_SUBS_TIME);}
 void cb_lilla_astrid_id_temp(double tmp){ save_subs_float_data(AIO_SUBS_LA_ID_TEMP);}
 void cb_villa_astrid_id_temp(double tmp){ save_subs_float_data(AIO_SUBS_LA_ID_TEMP);}
 void cb_villa_astrid_od_temp(double tmp){ save_subs_float_data(AIO_SUBS_VA_OD_TEMP);}
@@ -193,35 +196,47 @@ void print_subs_data(uint8_t subs_indx)
 }
 
 
+void save_subs_time(uint8_t subs_indx)
+{
+    Serial.printf("save_time(): %s\n", (char*)subs_data[subs_indx].aio_subs->lastread);   
+    subs_data[subs_indx].updated = true;
+
+}
+
+
 void save_subs_float_data(uint8_t subs_indx)
 {
     String f_str = String((char*)subs_data[subs_indx].aio_subs->lastread);
     subs_data[subs_indx].value = f_str.toFloat();
-    //Serial.print("float= "); Serial.print(f_str); Serial.print(" -> "); Serial.println(subs_data[subs_indx].value);
+    Serial.print("float= "); Serial.print(f_str); Serial.print(" -> "); Serial.println(subs_data[subs_indx].value);
     subs_data[subs_indx].updated = true;
-    print_subs_data(subs_indx);
+    //print_subs_data(subs_indx);
 }
 
 
 
 void cb_time(uint32_t feed_time) 
 {
-    uint32_t tz_adjusted;  
+    uint32_t tz_adj;  
     uint32_t offset_days = 3 * 86400;
     uint32_t unix_date2;
     uint32_t epoc_time;
 
     epoc_time = feed_time;
     unix_date2 = 1564398600 + offset_days;
-    Serial.printf("Date1: %4d-%02d-%02d %02d:%02d:%02d\n", 
-        year(epoc_time), month(epoc_time), day(epoc_time), 
-        hour(epoc_time), minute(epoc_time), second(epoc_time));
-    // adjust to local time zone
-    tz_adjusted = feed_time + (TIME_ZONE_OFFS * 60 * 60);
-    time_set_epoc_time(tz_adjusted);
+    // Serial.printf("Date: %4d-%02d-%02d %02d:%02d:%02d\n", 
+    //     year(epoc_time), month(epoc_time), day(epoc_time), 
+    //     hour(epoc_time), minute(epoc_time), second(epoc_time));
+    //adjust to local time zone
+    tz_adj = feed_time + (TIME_ZONE_OFFS * 60 * 60);
+    Serial.printf("Adjusted: %4d-%02d-%02d %02d:%02d:%02d\n", 
+        year(tz_adj), month(tz_adj), day(tz_adj), 
+        hour(tz_adj), minute(tz_adj), second(tz_adj));
+
+    time_set_epoc_time(tz_adj);
     uint8_t sindx = AIO_SUBS_TIME;
     subs_data[sindx].updated = true;
-    print_subs_data(sindx);    
+    //print_subs_data(sindx);    
 }
 
 
@@ -239,6 +254,18 @@ void activate_subscriptions(void)
     }
 }
 
+void aio_mqtt_debug_print(void)
+{
+    Serial.printf("MQTT: State= %d\n", aio_mqtt_task.state);
+    for (uint8_t subs_indx = AIO_SUBS_LA_ID_TEMP; subs_indx < AIO_SUBS_NBR_OF; subs_indx++)
+    {
+        Serial.printf("%s %d %f\n", 
+          subs_data[subs_indx].location,
+          subs_data[subs_indx].updated,
+          subs_data[subs_indx].value);
+    }
+
+}
 void aio_mqtt_stm(void)
 {
     if ( aio_mqtt_task.prev_state != aio_mqtt_task.state)

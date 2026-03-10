@@ -11,6 +11,7 @@ typedef struct
 {
     tm        new_time;
     DateTime  now;
+    uint32_t cloud_time;
 } rtc_ctrl_st;
 
 
@@ -22,19 +23,21 @@ typedef struct
 
 
 //extern RTC_PCF8563 rtc;
-RTC_PCF8563 rtc;
+//RTC_PCF8563 rtc;
+RTC_DS3231  rtc;
 rtc_ctrl_st rtc_ctrl;
 
 
 char week_day[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
 DateTime time_now;
+DateTime cloud_time;
 
 
 bool time_begin(void)
 {
   bool ret = false;
-  if (! rtc.begin()) 
+  if (!rtc.begin(&Wire1)) 
   {
     Serial.println("Couldn't find RTC");
     Serial.flush();
@@ -44,7 +47,6 @@ bool time_begin(void)
   {
     ret = true;
     time_lost_power(true);
-    rtc.start();
     time_print();
   }
   return ret;
@@ -75,14 +77,16 @@ void time_lost_power(bool force_new_time)
 
 }
 
+
 DateTime *time_get_time_now(void)
 {
-    time_now = rtc.now();
-    return &time_now;
+    rtc_ctrl.now = rtc.now();
+
+    return &rtc_ctrl.now;
 }
 
 
-void time_to_string(char *buff)
+void time_to_string(char *buff )
 {
     DateTime now = rtc.now();
     sprintf(buff, "%s %d-%d-%d",
@@ -93,6 +97,20 @@ void time_to_string(char *buff)
     );   
 }
 
+void time_to_encode(char *buff )
+{
+    DateTime now = rtc.now();
+    sprintf(buff, "<##C0T0=%d;%d;%d;%d;%d;%d>",
+        now.year(),
+        now.month(),
+        now.day(),
+        now.dayOfTheWeek(),
+        now.hour(),
+        now.minute()
+    );   
+}
+
+
 uint32_t time_get_epoc_time(void)
 {
     DateTime now = rtc.now();
@@ -101,7 +119,11 @@ uint32_t time_get_epoc_time(void)
 
 void time_set_epoc_time(uint32_t epoc_time)
 {
-    const DateTime now =epoc_time;
+    DateTime now =epoc_time;
+    Serial.printf("Time Set: %4d-%02d-%02d %02d:%02d:%02d\n", 
+        year(epoc_time), month(epoc_time), day(epoc_time), 
+        hour(epoc_time), minute(epoc_time), second(epoc_time));
+
     //rtc_ctrl.now.year()
     //const uint32_t epoc = epoc_time;
     // rtc_ctrl.new_time.tm_year = year(epoc);
@@ -112,6 +134,8 @@ void time_set_epoc_time(uint32_t epoc_time)
     // rtc_ctrl.new_time.tm_sec = second(epoc);
 
     rtc.adjust(now);
+    Serial.printf("time_set_epoc_time(%d)\n",epoc_time);
+    Serial.println("time_print():");
     time_print();
 }
 void time_print(void)

@@ -127,6 +127,8 @@ void dashboard_big_time(void)
     if (now->minute() != prev_minute)
     {
         sprintf(buff," %02d:%02d", now->hour(), now->minute());
+        //sprintf(buff," %02d:%02d", 12, 34);
+        Serial.printf("dashboard_big_time(): %s\n",buff);
         prev_minute = now->minute();
         box_paint(bindx, BOX_SCHEME_TIME);
         box_print_text(bindx, buff);
@@ -181,7 +183,6 @@ bool dasboard_show_sensor(uint8_t sindx)
             if(strlen(buff) > 5) sprintf(buff,"%.1f", subs_data[sindx].value);
             else if(strlen(buff) > 6) sprintf(buff,"%.0f", subs_data[sindx].value); 
             Serial.println(buff);
-            //Str.toCharArray(buff,6);
             box_paint(middle_big_box, BOX_SCHEME_SENSOR);
             box_print_text(middle_big_box, buff);
             update_box = true;

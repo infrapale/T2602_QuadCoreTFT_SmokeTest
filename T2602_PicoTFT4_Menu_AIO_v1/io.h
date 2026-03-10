@@ -4,7 +4,9 @@
 #include "main.h"
 //#define BOARD_PICO_TFT_4KEYS
 
-
+#define I2C_ADDR_DS3231     0x68 
+#define I2C_ADDR_AT24C32    0x57 
+ 
 
 // TFT PIN Definitions
 #if TFT_TARGET_BOARD == BOARD_PICO_TFT_4KEYS
@@ -71,6 +73,12 @@ typedef struct
     int8_t      design_pin;
     int8_t      library_pin;
 } tft_pin_check_st;
+
+void io_initialize(void);
+
+uint16_t io_read_ldr(void);
+uint16_t io_read_akbd(void);
+
 
 
 #endif

@@ -5,6 +5,9 @@ TFT ILI9341 consol
 - PicoW
 
 
+https://github.com/infrapale/T2603_Analog_4_Key.git
+
+
 Setup Bodmer TFT_eSPI library
   Install TFT_eSPI Library in Arduino IDE
   Open console
