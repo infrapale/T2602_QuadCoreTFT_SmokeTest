@@ -25,15 +25,17 @@ https://learn.adafruit.com/dvi-io/code-the-dashboard
 #include "sensor.h"
 #include "box.h"
 #include "eeprom.h"
+#include "sd.h"
 
 
 void print_debug_task(void)
 {
-  //atask_print_status(true);
+  atask_print_status(true);
   //aio_mqtt_debug_print();
-  //dashboard_debug_print();
-  Serial.printf("LDR  = %d\n", io_read_ldr());
-  Serial.printf("AKBD = %d\n", io_read_akbd());
+  dashboard_debug_print();
+  sensor_debug();
+//   Serial.printf("LDR  = %d\n", io_read_ldr());
+//   Serial.printf("AKBD = %d\n", io_read_akbd());
 }
 
 //                                  123456789012345   ival  next  state  prev  cntr flag  call backup
@@ -56,10 +58,11 @@ void setup(void) {
     Wire1.setSCL(PIN_I2C1_SCL);
     Wire1.begin();
     time_begin();
-    atask_initialize();
     io_initialize();
+    atask_initialize();
     eeprom_initialize();
     atask_add_new(&debug_task_handle);
+    io_task_initialize();
     comm_initialize();
     sensor_initialize();
     

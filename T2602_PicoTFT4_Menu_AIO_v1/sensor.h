@@ -16,10 +16,21 @@ typedef struct
     int16_t     io_indx;
 } sensor_field_st;
 
+typedef struct
+{
+    char    name[CMD_FIELD_LEN];
+    float   temp;
+    float   hum;
+    float   batt;
+    bool    updated;
+} sensor_ruuvi_st;
+
 void sensor_initialize(void);
 
 void sensor_task(void);
 
-void sensor_update(msg_data_st *msg);
+void sensor_ruuvi_update(comm_data_st *msg);
+
+void sensor_debug(void);
 
 #endif

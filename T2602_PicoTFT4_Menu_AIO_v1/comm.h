@@ -1,7 +1,7 @@
 #ifndef __COMM_H__
 #define __COMM_H__
 
-#define CMD_TAG_LEN     5
+#define MSG_TAG_LEN     8
 #define CMD_MAX_VALUES  8
 #define CMD_FIELD_LEN   8
 #define COMM_BUFF_LEN   64
@@ -14,6 +14,16 @@ typedef enum
     COMM_INDX_NBR_OF,
 } comm_indx_et;
 
+typedef enum 
+{
+    COMM_MSG_UNDEFINED = 0,
+    COMM_MSG_DATE_TIME,
+    COMM_MSG_RUUVI,
+    COMM_MSG_RFM_SENSOR,
+    COMM_MSG_X,
+    COMM_MSG_NBR_OF,
+} comm_msg_type_et;
+
 typedef struct
 {
     char tx_buff[COMM_BUFF_LEN];
@@ -21,22 +31,14 @@ typedef struct
     bool rx_avail;
 } comm_st;
 
-typedef struct
-{
-  char      tag[CMD_TAG_LEN];
-  //cmd_et    tag_indx;
-  uint8_t   nbr_values;
-  int16_t   value[CMD_MAX_VALUES];
-  char      field[CMD_MAX_VALUES][CMD_FIELD_LEN];
-  uint8_t   target;
-  uint8_t   sender;
-} msg_data_st;
 
 typedef struct
 {
-    uint32_t send_time_upate_at;
-    msg_data_st msg;
-} comm_ctrl_st;
+    uint32_t    send_time_upate_at;
+    uint8_t     nbr_values;
+    char        field[CMD_MAX_VALUES][CMD_FIELD_LEN];
+    comm_msg_type_et msg_type;
+} comm_data_st;
 
 
 

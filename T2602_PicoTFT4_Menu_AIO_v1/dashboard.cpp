@@ -277,7 +277,7 @@ void dashboard_debug_print(void)
 void dashboard_backlight_task(void)
 {
     backlight.ldr_value = analogRead(PIN_LDR_AN);
-    //backlight.pir_value = digitalRead(PIN_PIR_INP);
+    backlight.pir_value = digitalRead(PIN_PIR);
 
     switch(blh.state)
     {
@@ -285,7 +285,8 @@ void dashboard_backlight_task(void)
             blh.state = 10; //dark
             break;
         case 10:
-            if(backlight.ldr_value > 3000 ) blh.state = 300;
+            if(backlight.ldr_value > 3400 ) blh.state = 50;
+            else if(backlight.ldr_value > 3000 ) blh.state = 100;
             else if(backlight.ldr_value > 2000 ) blh.state = 200;
             else blh.state = 100;
             break;
